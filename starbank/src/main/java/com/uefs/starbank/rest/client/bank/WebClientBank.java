@@ -52,7 +52,6 @@ public class WebClientBank implements WebClientBankI {
         Arrays.stream(Bank.values()).filter(bank -> bank.getCode().equals(bankCode)).findFirst().ifPresent(bank -> {
             try {
                 amountWithdrawn.set(Double.parseDouble(postSynchronously(bank.getCompleteUrl() + BankOperation.WITHDRAWAL.getOperationValue(), withdrawalDTO)));
-
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -69,7 +68,6 @@ public class WebClientBank implements WebClientBankI {
         Arrays.stream(Bank.values()).filter(bank -> bank.getCode().equals(bankCode)).findFirst().ifPresent(bank -> {
             try {
                 transaction.set(getTransactionRequestAsync(bank.getCompleteUrl() + BankOperation.TRANSACTION.getOperationValue() + "/" + id));
-
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

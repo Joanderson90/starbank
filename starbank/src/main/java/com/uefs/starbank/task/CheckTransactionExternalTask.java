@@ -35,7 +35,7 @@ public class CheckTransactionExternalTask {
     @Scheduled(fixedDelay = FIXED_DELAY)
     public void scheduleFixedDelayTask() {
 
-        List<TransactionExternal> transactionListToRemove = new ArrayList<>();
+        List<TransactionExternal> transactionToRemoveList = new ArrayList<>();
 
         DataTransactionExternal.getTransactionList().forEach(transactionExternal -> {
             log.info("Checking external transaction with id: {} from bank: {}.",
@@ -50,7 +50,7 @@ public class CheckTransactionExternalTask {
                             transactionExternal.getId(),
                             getBankName(transactionExternal));
 
-                    transactionListToRemove.add(DataTransactionExternal.findById(transactionExternal.getId()).get());
+                    transactionToRemoveList.add(DataTransactionExternal.findById(transactionExternal.getId()).get());
                 }
 
             } catch (Exception e) {
@@ -58,7 +58,7 @@ public class CheckTransactionExternalTask {
                         transactionExternal.getId(),
                         getBankName(transactionExternal));
 
-                transactionListToRemove.add(DataTransactionExternal.findById(transactionExternal.getId()).get());
+                transactionToRemoveList.add(DataTransactionExternal.findById(transactionExternal.getId()).get());
 
                 undoTransaction(transactionExternal);
 
@@ -66,7 +66,7 @@ public class CheckTransactionExternalTask {
 
         });
 
-        DataTransactionExternal.getTransactionList().removeAll(transactionListToRemove);
+        DataTransactionExternal.getTransactionList().removeAll(transactionToRemoveList);
     }
 
     private void undoTransaction(TransactionExternal transactionExternal) {

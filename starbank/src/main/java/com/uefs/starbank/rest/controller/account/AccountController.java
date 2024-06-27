@@ -18,7 +18,6 @@ public class AccountController {
 
     @PostMapping("create")
     public Account create(@RequestBody @Valid AccountDTO account) {
-
         return accountService.create(account);
     }
 

@@ -156,14 +156,7 @@ public class BankService implements BankI {
             transferDTO.getWithdrawalOriginList().forEach(withdrawalOrigin -> {
 
                 if (withdrawalOrigin.getDigit().equals(getThisBank().getCode())) {
-
-                    while (AccountMutex.hasAccessToCriticalSection(withdrawalOrigin.getAccountNumber())) ;
-
-                    AccountMutex.addAccessToCriticalSection(withdrawalOrigin.getAccountNumber());
-
                     accountWithdrawalMap.put(withdrawalOrigin, withdrawal(withdrawalOrigin));
-
-                    AccountMutex.removeAccessToCriticalSection(withdrawalOrigin.getAccountNumber());
 
                 } else {
                     withdrawalOrigin.setBankCodeRequestWithdrawal(getThisBank().getCode());
@@ -203,15 +196,7 @@ public class BankService implements BankI {
         depositDTO.setAmount(amount);
 
         if (accountDigit.equals(getThisBank().getCode())) {
-            while (AccountMutex.hasAccessToCriticalSection(accountNumber)) ;
-
-            AccountMutex.addAccessToCriticalSection(accountNumber);
-
             deposit(depositDTO);
-
-            AccountMutex.removeAccessToCriticalSection(accountNumber);
-
-
         } else {
             webClientBank.deposit(depositDTO, accountDigit);
         }
@@ -238,18 +223,15 @@ public class BankService implements BankI {
     }
 
     private void undoTransfer(Map<WithdrawalDTO, Double> accountWithdrawalMap) {
-
         accountWithdrawalMap.forEach((withdrawalDTO, amount) -> doDeposit(withdrawalDTO.getAccountNumber(), amount, withdrawalDTO.getDigit()));
     }
 
     @Override
     public Transaction getTransaction(Integer id) {
-
         return DataTransaction
                 .findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Transaction not found."));
-
 
     }
 
