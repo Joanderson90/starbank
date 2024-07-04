@@ -19,7 +19,6 @@ public class DataAccount {
     }
 
     public static Optional<Account> findByNumber(Integer number) {
-
         return getAccountList()
                 .stream()
                 .filter(account -> account.getNumber().equals(number))
@@ -28,7 +27,6 @@ public class DataAccount {
     }
 
     public static Optional<Account> findByNumberAndDigitAndPassword(Integer number, Integer digit, String password) {
-
         return getAccountList()
                 .stream()
                 .filter(account -> account.getNumber().equals(number) &&

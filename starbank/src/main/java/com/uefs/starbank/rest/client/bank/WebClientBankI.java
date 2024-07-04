@@ -11,4 +11,6 @@ public interface WebClientBankI {
     Double withdrawal(WithdrawalDTO withdrawalDTO, Integer bankCode);
 
     Transaction getTransaction(Integer integer, Integer bankCode);
+
+    void sendToken(Integer bankCode);
 }

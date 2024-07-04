@@ -48,4 +48,10 @@ public class BankController {
     public Transaction getTransaction(@PathVariable Integer id) {
         return bankService.getTransaction(id);
     }
+
+    @PostMapping("/handleToken")
+    public void handleToken() throws InterruptedException {
+        bankService.handleToken();
+    }
+
 }

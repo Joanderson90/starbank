@@ -13,7 +13,6 @@ public class DataTransactionExternal {
     private static final List<TransactionExternal> transactionList = new ArrayList<>();
 
     public static TransactionExternal addTransaction(TransactionExternal transaction) {
-
         transactionList.add(transaction);
 
         return transaction;

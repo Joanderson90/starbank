@@ -13,15 +13,7 @@ public class DataTransaction {
     @Getter
     private static final List<Transaction> transactionList = new ArrayList<>();
 
-    public static Transaction addTransaction(Transaction transaction) {
-
-        transactionList.add(transaction);
-
-        return transaction;
-    }
-
     public static Transaction addTransaction() {
-
         Transaction newTransaction = new Transaction(transactionList.size() + 1, TransactionStatus.RUNNING);
 
         transactionList.add(newTransaction);

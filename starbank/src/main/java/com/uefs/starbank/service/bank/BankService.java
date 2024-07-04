@@ -1,6 +1,7 @@
 package com.uefs.starbank.service.bank;
 
 import com.uefs.starbank.data.account.DataAccount;
+import com.uefs.starbank.data.token.DataToken;
 import com.uefs.starbank.data.transaction.DataTransaction;
 import com.uefs.starbank.data.transaction.DataTransactionExternal;
 import com.uefs.starbank.domain.bank.AccountSimpleDTO;
@@ -17,30 +18,35 @@ import com.uefs.starbank.rest.dto.bank.DepositDTO;
 import com.uefs.starbank.rest.dto.bank.TransferDTO;
 import com.uefs.starbank.rest.dto.bank.WithdrawalDTO;
 import com.uefs.starbank.service.config.StarBankApiConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class BankService implements BankI {
 
-    private static final Logger log = LoggerFactory.getLogger(BankService.class);
     @Autowired
     WebClientBankI webClientBank;
 
     @Autowired
     StarBankApiConfig starBankApiConfig;
 
+
     @Override
     public void deposit(DepositDTO deposit) {
 
         DataAccount.findByNumber(deposit.getAccountNumber())
                 .ifPresentOrElse((account -> {
+
+                            while (!DataToken.hasToken()) {
+                                log.info("Waiting token for do deposit...");
+                            }
 
                             while (AccountMutex.hasAccessToCriticalSection(account.getNumber())) ;
 
@@ -69,6 +75,10 @@ public class BankService implements BankI {
                         withdrawalDTO.getDigit(),
                         withdrawalDTO.getPassword())
                 .ifPresentOrElse(account -> {
+
+                            while (!DataToken.hasToken()) {
+                                log.info("Waiting token for do withdrawal...");
+                            }
 
                             while (AccountMutex.hasAccessToCriticalSection(account.getNumber())) ;
 
@@ -179,7 +189,6 @@ public class BankService implements BankI {
 
             throw new RuntimeException(e);
 
-
         }
 
         DataTransaction.updateStatus(transaction.getId(), TransactionStatus.FINISHED);
@@ -232,6 +241,48 @@ public class BankService implements BankI {
                 .findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Transaction not found."));
+
+    }
+
+    @Override
+    public void handleToken() throws InterruptedException {
+
+        try {
+
+            Bank thisBank = this.getThisBank();
+
+            log.info("({}) Got the token!", thisBank.getName());
+
+            DataToken.setToken(true);
+
+            TimeUnit.SECONDS.sleep(3);
+
+            Bank nextBankHope = getNextBankHope(thisBank);
+
+            log.info("Passing token to bank: {}. ", nextBankHope.getName());
+
+            DataToken.setToken(false);
+
+            webClientBank.sendToken(nextBankHope.getCode());
+
+            log.info("Token away!");
+
+
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+
+            throw new InterruptedException();
+        }
+
+
+    }
+
+    private Bank getNextBankHope(Bank thisBank) {
+        return switch (thisBank.getCode()) {
+            case 1 -> Bank.STAR_BANK_COPY_1;
+            case 2 -> Bank.STAR_BANK_COPY_2;
+            default -> Bank.STAR_BANK;
+        };
 
     }
 

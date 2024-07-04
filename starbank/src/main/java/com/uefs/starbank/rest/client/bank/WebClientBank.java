@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
@@ -26,7 +27,6 @@ public class WebClientBank implements WebClientBankI {
 
     public WebClientBank() {
         HttpClient httpClient = HttpClient.create();
-
         this.webClient = WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient)).build();
     }
 
@@ -63,6 +63,7 @@ public class WebClientBank implements WebClientBankI {
 
     @Override
     public Transaction getTransaction(Integer id, Integer bankCode) {
+
         AtomicReference<Transaction> transaction = new AtomicReference<>(new Transaction());
 
         Arrays.stream(Bank.values()).filter(bank -> bank.getCode().equals(bankCode)).findFirst().ifPresent(bank -> {
@@ -77,9 +78,24 @@ public class WebClientBank implements WebClientBankI {
 
     }
 
+    @Override
+    public void sendToken(Integer bankCode) {
+
+        Arrays.stream(Bank.values()).filter(bank -> bank.getCode().equals(bankCode)).findFirst().ifPresent(bank -> {
+            try {
+                makePostRequestAsync(bank.getCompleteUrl() + BankOperation.HANDLE_TOKEN.getOperationValue(), "")
+                        .subscribe(
+                                response -> log.info("SUCCESS API Response {}", response),
+                                error -> log.error(error.getMessage()));
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
     public String postSynchronously(String url, Object requestBody) throws Exception {
 
-        log.info("Going to hit API - URL {} Body {}", url, requestBody);
         String response = "";
 
         try {
@@ -101,6 +117,19 @@ public class WebClientBank implements WebClientBankI {
         }
 
         return response;
+    }
+
+    public static Mono<String> makePostRequestAsync(String url, String postData) {
+        WebClient webClient = WebClient.builder().build();
+
+        log.info("Going to hit API - URL {} Body {}", url, postData);
+
+        return webClient.post()
+                .uri(url)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData("data", postData))
+                .retrieve()
+                .bodyToMono(String.class);
     }
 
     public Transaction getTransactionRequestAsync(String url) {

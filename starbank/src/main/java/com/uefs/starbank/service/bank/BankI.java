@@ -22,9 +22,12 @@ public interface BankI {
 
     Transaction getTransaction(Integer id);
 
+    void handleToken() throws InterruptedException;
+
     Bank getThisBank();
 
 
 }
+
 
 

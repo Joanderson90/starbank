@@ -1,6 +1,7 @@
 package com.uefs.starbank.concurrency;
 
 import com.uefs.starbank.data.account.DataAccount;
+import com.uefs.starbank.data.token.DataToken;
 import com.uefs.starbank.domain.bank.Account;
 import com.uefs.starbank.domain.enums.Bank;
 import com.uefs.starbank.domain.enums.BankOperation;
@@ -46,6 +47,8 @@ public class ConcurrencyTransactionSimulator implements CommandLineRunner {
                 .build();
 
         DataAccount.addAccount(newAccount);
+
+        DataToken.setToken(true);
 
         Thread thread1 = new ConcurrencyAccount(newAccount, bankService, BankOperation.DEPOSIT);
         Thread thread2 = new ConcurrencyAccount(newAccount, bankService, BankOperation.DEPOSIT);

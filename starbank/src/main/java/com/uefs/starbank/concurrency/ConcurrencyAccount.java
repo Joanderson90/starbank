@@ -23,7 +23,6 @@ public class ConcurrencyAccount extends Thread {
 
     @Override
     public void run() {
-
         switch (this.bankOperation) {
             case DEPOSIT:
                 doDeposit();
