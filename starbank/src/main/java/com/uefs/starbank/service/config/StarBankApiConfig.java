@@ -11,4 +11,7 @@ public class StarBankApiConfig {
     @Value("${com.uefs.starbank.bank-code}")
     private String bankCode;
 
+    @Value("${com.uefs.starbank.run-concurrency-simulator}")
+    private String runConcurrencySimulator;
+
 }

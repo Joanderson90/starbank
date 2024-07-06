@@ -7,6 +7,7 @@ import com.uefs.starbank.domain.enums.Bank;
 import com.uefs.starbank.domain.enums.BankOperation;
 import com.uefs.starbank.domain.user.User;
 import com.uefs.starbank.service.bank.BankI;
+import com.uefs.starbank.service.config.StarBankApiConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -21,10 +22,16 @@ public class ConcurrencyTransactionSimulator implements CommandLineRunner {
     @Autowired
     private BankI bankService;
 
+    @Autowired
+    StarBankApiConfig starBankApiConfig;
+
 
     @Override
     public void run(String... args) throws Exception {
-//        simulateConcurrency();
+
+        if (Boolean.parseBoolean(starBankApiConfig.getRunConcurrencySimulator())) {
+            simulateConcurrency();
+        }
     }
 
     public void simulateConcurrency() {
