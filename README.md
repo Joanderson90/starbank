@@ -13,6 +13,7 @@ Este relatório tem o objetivo de descrever os detalhes do desenvolvimento de um
 
 # <a id="introducao"></a>
 ## Introdução
+
 Um banco central é deveras importante para os bancos comerciais que atuam em um determinado país, entretanto alguns países não possuem esta entidade central para implementação de uma política monetária, direcionamento da comunicação e transações entre os outros tipos de bancos.
 
 Nesse sentido, foi solicitado aos alunos do curso de Engenharia de Computação da Universidade Estadual de Feira de Santana(UEFS), que desenvolvessem um sistema distribuído para permitir a comunicação e a troca de dados entre um conjunto de aplicações que juntas formam um consórcio bancário, sem a presença de uma entidade central para direcionar as transações.
@@ -24,6 +25,7 @@ Após o desenvolvimento do sistema em questão, foi utilizado containers docker 
 
 # <a id="fundamentacao_teorica"></a>
 ## Fundamentação Teórica
+
 - Uma API REST (também chamada de API RESTful ou web API RESTful) é uma interface de programação de aplicativos (API) que segue os princípios de design do estilo arquitetônico de transferência de estado representacional (REST). A API Rest foi utilizada no problema para realizar a comunicação entre os bancos.
 - O Token Ring é um protocolo de redes criado pela IBM nos anos 80. Ela usa a topologia lógica de anel e funciona na camada física, pela ligação de dados, e de união com o modelo OSI de acordo com a aplicação. As redes Token Ring são diferentes das redes Ethernet, muito utilizadas hoje e com uma topologia lógica de barramento. Com um símbolo formado por uma trama de três bytes (token), o funcionamento circula em uma topologia de anel onde as estações aguardam a recepção para serem transmitidas. A transmissão acontece em uma janela de tempo e pelas que possuem o token. Neste projeto, o token ring foi utilizado para resolver o problema das requisições concorrentes entre os bancos envolvendo uma mesma conta.
 - O mecanismo de MUTual EXclusion é usado em ambientes concorrentes e é uma forma de impedir que um recurso seja acessado por mais de uma linha de processamento ao mesmo tempo. Ele é usado principalmente para evitar a condição de corrida, para manter uma operação atômica. A exclusão mútua neste projeto, foi utilizada para resolver o problema de transações concorrentes em um mesmo banco(servidor) envolvendo uma mesma conta.
@@ -53,6 +55,7 @@ No quesito confiabilidade das transações, se fez necessário o uso de um job, 
 
 # <a id="resultados"></a>
 ## Resultados
+
 ### Troca de informações entre os bancos
 Como descrito anteriormente, não houve um banco central para centralizar todas operações e transações entre os bancos, nesse sentido foi feito um consórcio entre os bancos para viabilizar essa troca de informações. Para cada banco foi criada uma API REST para permitir essa troca de informações. Que funcionou como esperado, isto é a troca de informações foi realizada com sucesso entre os bancos. Para tal foi utilizado o framework Spring Boot e a biblioteca WebClient, esta que facilita a comunicação entre APIs em diferentes projetos.
 
