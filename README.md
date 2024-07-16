@@ -1,6 +1,17 @@
 ## MI Concorrência e Conectividade - Problema 2 Transações Bancárias Distribuídas.
 Este relatório tem o objetivo de descrever os detalhes do desenvolvimento de um sistema baseado na Arquitetura em Rede, utilizando a linguagem de programação Java.
 
+## Conteúdos 
+
+&nbsp;&nbsp;&nbsp;[**1.** Introdução](#introducao)
+
+&nbsp;&nbsp;&nbsp;[**2.** Fundamentação Teórica](#fundamentacao_teorica)
+
+&nbsp;&nbsp;&nbsp;[**3.** Metodologia](#metodologia)
+
+&nbsp;&nbsp;&nbsp;[**4.** Resultados](#resultados)
+
+# <a id="introducao"></a>
 ## Introdução
 Um banco central é deveras importante para os bancos comerciais que atuam em um determinado país, entretanto alguns países não possuem esta entidade central para implementação de uma política monetária, direcionamento da comunicação e transações entre os outros tipos de bancos.
 
@@ -11,7 +22,7 @@ O sistema permite que os usuários façam as seguintes operações: criação de
 
 Após o desenvolvimento do sistema em questão, foi utilizado containers docker para virtualização da aplicação e execução dos testes.
 
-
+# <a id="fundamentacao_teorica"></a>
 ## Fundamentação Teórica
 - Uma API REST (também chamada de API RESTful ou web API RESTful) é uma interface de programação de aplicativos (API) que segue os princípios de design do estilo arquitetônico de transferência de estado representacional (REST). A API Rest foi utilizada no problema para realizar a comunicação entre os bancos.
 - O Token Ring é um protocolo de redes criado pela IBM nos anos 80. Ela usa a topologia lógica de anel e funciona na camada física, pela ligação de dados, e de união com o modelo OSI de acordo com a aplicação. As redes Token Ring são diferentes das redes Ethernet, muito utilizadas hoje e com uma topologia lógica de barramento. Com um símbolo formado por uma trama de três bytes (token), o funcionamento circula em uma topologia de anel onde as estações aguardam a recepção para serem transmitidas. A transmissão acontece em uma janela de tempo e pelas que possuem o token. Neste projeto, o token ring foi utilizado para resolver o problema das requisições concorrentes entre os bancos envolvendo uma mesma conta.
@@ -21,6 +32,7 @@ Após o desenvolvimento do sistema em questão, foi utilizado containers docker 
 - Containers são ambientes isolados que podem ser instalados em computadores e serem utilizados para seus devidos fins de forma que não é necessário instalar o serviço dentro do computador como uma aplicação, então caso um container dê problema, como ele é um ambiente isolado ele pode ser deletado e uma outra instância deste container pode ser reinstalado.
 - Docker é um software open source que permite a criação de container e armazenamento dos mesmo em repositórios na internet, mas também que faz a virtualização em nível de sistema operacional de suas aplicações em seus contêineres nos computadores facilitando a instalação e remoção sem afetar a máquina física caso seja necessário.
 
+# <a id="metodologia"></a>
 ## Metodologia
 
 #### Token Ring
@@ -38,6 +50,8 @@ Este bloco foi utilizado nas transações para capturar e desfazer estas caso oc
 #### Job Scheduler
 No quesito confiabilidade das transações, se fez necessário o uso de um job, isto é, uma função que foi executada em um intervalo de 10 segundos, com o propósito de verificar se uma determinada transação feita de um servidor externo, como um saque, foi finalizada com sucesso, se sim, a transação não era desfeita, se não a transação era identificada e desfeita no banco em questão, garantindo assim que nenhum saldo a mais ou a menos fosse imposta em uma determinada conta.
 
+
+# <a id="resultados"></a>
 ## Resultados
 ### Troca de informações entre os bancos
 Como descrito anteriormente, não houve um banco central para centralizar todas operações e transações entre os bancos, nesse sentido foi feito um consórcio entre os bancos para viabilizar essa troca de informações. Para cada banco foi criada uma API REST para permitir essa troca de informações. Que funcionou como esperado, isto é a troca de informações foi realizada com sucesso entre os bancos. Para tal foi utilizado o framework Spring Boot e a biblioteca WebClient, esta que facilita a comunicação entre APIs em diferentes projetos.
@@ -48,7 +62,7 @@ Uma das especificações do projeto proposto, era permitir que transações de t
 
 ### Servidor do Banco
 Como dito nas seções anteriores, o servidor do banco foi construído utilizando  o framework Spring Boot, que auxilia no processo de criação de API Web. Foi criada uma api que pode ser utilizada para simular vários bancos. Dessa forma, se faz necessário passar como variável de ambiente apenas os endereços de cada banco envolvido na rede anel. 
-O servidor pode fazer o controle de criações de contas bancárias, onde se faz necessário passar apenas a lista com os dados de cada usuário pertencente a conta, e a senha, além de permitir fazer as transações bancárias mais comumentes realizadas, como transferência de banco para banco ou para outros bancos, depósito e verificação de saldo
+O servidor pode fazer o controle de criações de contas bancárias, onde se faz necessário passar apenas a lista com os dados de cada usuário pertencente a conta, e a senha, além de permitir fazer as transações bancárias mais comumentes realizadas, como transferência de banco para banco ou para outros bancos, depósito e verificação de saldo.
 
 ### Docker
 Cada aplicação acima possui uma imagem docker que foi disponibilizada no repositório online do docker hub. Para executar uma das aplicações é necessário abrir o terminal de sua preferência e ir para a pasta raiz da aplicação desejada e executar o seguinte comando:
