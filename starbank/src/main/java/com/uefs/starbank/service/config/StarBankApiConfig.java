@@ -11,4 +11,14 @@ public class StarBankApiConfig {
     @Value("${com.uefs.starbank.bank-code}")
     private String bankCode;
 
+    @Value("${com.uefs.starbank.ip-address-bank-1}")
+    private String ipAddressBank1;
+
+    @Value("${com.uefs.starbank.ip-address-bank-2}")
+    private String ipAddressBank2;
+
+    @Value("${com.uefs.starbank.ip-address-bank-3}")
+    private String ipAddressBank3;
+
+
 }

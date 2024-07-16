@@ -5,7 +5,9 @@ import com.uefs.starbank.domain.enums.Bank;
 import com.uefs.starbank.domain.enums.BankOperation;
 import com.uefs.starbank.rest.dto.bank.DepositDTO;
 import com.uefs.starbank.rest.dto.bank.WithdrawalDTO;
+import com.uefs.starbank.service.config.StarBankApiConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -22,6 +24,9 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class WebClientBank implements WebClientBankI {
 
+    @Autowired
+    private StarBankApiConfig starBankApiConfig;
+
     private final WebClient webClient;
 
 
@@ -36,7 +41,7 @@ public class WebClientBank implements WebClientBankI {
 
         Arrays.stream(Bank.values()).filter(bank -> bank.getCode().equals(bankCode)).findFirst().ifPresent(bank -> {
             try {
-                postSynchronously(bank.getCompleteUrl() + BankOperation.DEPOSIT.getOperationValue(), depositDTO);
+                postSynchronously(bank.getCompleteUrl(starBankApiConfig) + BankOperation.DEPOSIT.getOperationValue(), depositDTO);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -51,7 +56,7 @@ public class WebClientBank implements WebClientBankI {
 
         Arrays.stream(Bank.values()).filter(bank -> bank.getCode().equals(bankCode)).findFirst().ifPresent(bank -> {
             try {
-                amountWithdrawn.set(Double.parseDouble(postSynchronously(bank.getCompleteUrl() + BankOperation.WITHDRAWAL.getOperationValue(), withdrawalDTO)));
+                amountWithdrawn.set(Double.parseDouble(postSynchronously(bank.getCompleteUrl(starBankApiConfig) + BankOperation.WITHDRAWAL.getOperationValue(), withdrawalDTO)));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -68,7 +73,7 @@ public class WebClientBank implements WebClientBankI {
 
         Arrays.stream(Bank.values()).filter(bank -> bank.getCode().equals(bankCode)).findFirst().ifPresent(bank -> {
             try {
-                transaction.set(getTransactionRequestAsync(bank.getCompleteUrl() + BankOperation.TRANSACTION.getOperationValue() + "/" + id));
+                transaction.set(getTransactionRequestAsync(bank.getCompleteUrl(starBankApiConfig) + BankOperation.TRANSACTION.getOperationValue() + "/" + id));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -83,7 +88,7 @@ public class WebClientBank implements WebClientBankI {
 
         Arrays.stream(Bank.values()).filter(bank -> bank.getCode().equals(bankCode)).findFirst().ifPresent(bank -> {
             try {
-                makePostRequestAsync(bank.getCompleteUrl() + BankOperation.HANDLE_TOKEN.getOperationValue(), "")
+                makePostRequestAsync(bank.getCompleteUrl(starBankApiConfig) + BankOperation.HANDLE_TOKEN.getOperationValue(), "")
                         .subscribe(
                                 response -> log.info("SUCCESS API Response {}", response),
                                 error -> log.error(error.getMessage()));
